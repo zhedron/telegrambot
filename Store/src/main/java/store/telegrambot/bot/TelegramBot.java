@@ -26,6 +26,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import com.vdurmont.emoji.EmojiParser;
 
 import store.telegrambot.config.BotConfig;
+import store.telegrambot.user.User;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -49,6 +50,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 			
 			switch (fromUser) {
 			case "/start":
+				registerUser(update.getMessage());
 				startCommand (chatId, update.getMessage().getChat().getFirstName());
 				break;
 			case "/help":
@@ -213,5 +215,33 @@ public class TelegramBot extends TelegramLongPollingBot {
 		try {
 			execute (message);
 		} catch (TelegramApiException e) {}
+	}
+	
+	private void registerUser (Message msg) {
+		Chat chat = msg.getChat();
+		Long chatId = msg.getChatId();
+		
+		User user = new User ();
+		
+		Configuration cfg = new Configuration();
+		
+		cfg.configure();
+		
+		SessionFactory sessionFactory = cfg.buildSessionFactory();
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		user.setChatId(chatId);
+		user.setFirstName(chat.getFirstName());
+		user.setLastName(chat.getLastName());
+		user.setUserName(chat.getUserName());
+		
+		session.persist(user);
+		
+		sessionFactory.openSession();
+		session.getTransaction().commit();
+		session.close();
+		
 	}
 }
