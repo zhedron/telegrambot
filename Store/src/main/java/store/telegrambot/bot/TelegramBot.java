@@ -1,20 +1,17 @@
 package store.telegrambot.bot;
-
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -59,12 +56,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 			case "/store":
 				inlineCommand(chatId);
 				break;
-			case "/balance":
-				Scanner sc = new Scanner(System.in);
-				
-				String balance = sc.next();
-				balance(chatId, "Ваш баланс: " + balance + "$");
-				break;
 				default:
 					startCommand(chatId, "We don't understand you. To contact me, use the /help command");
 			}
@@ -72,6 +63,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 			String callData = update.getCallbackQuery().getData();
 			Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
 			Long chatId = update.getCallbackQuery().getMessage().getChatId();
+			SendMessage message = new SendMessage();
+			SendPhoto photo = new SendPhoto();
 			
 			if (callData.equals("Computers")) {
 				EditMessageText edit = new EditMessageText();
@@ -79,26 +72,51 @@ public class TelegramBot extends TelegramLongPollingBot {
 				edit.setChatId(chatId);
 				edit.setMessageId(messageId);
 				edit.setText("You have selected computers. Now choose the computer you want to buy");
+				message.setText("I am buy computer");
+				message.setChatId(chatId);
+				
+				InputFile file = new InputFile ("https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/7/2/72d935d28f4c11edad9500155d05f304_06d567e9cd5411edad9500155d05f304_4.jpg/w_600");
+				photo.setPhoto(file);
+				photo.setChatId(chatId);
 				
 				try {
 					execute (edit);
+					execute (message);
+					execute (photo);
 				} catch (TelegramApiException e) {}
 			} else if (callData.equals("Laptops")) {
 				EditMessageText edit = new EditMessageText();
 				edit.setChatId(chatId);
 				edit.setMessageId(messageId);
 				edit.setText("You have selected laptops. Now choose the laptop you want to buy");
+				message.setText("I am buy laptop lenovo legion");
+				message.setChatId(chatId);
+				
+				InputFile file = new InputFile("https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/l/e/lenovo-legion-5-15ach6-82jw00qkra-phantom-blue_1.jpg/w_600");
+				photo.setPhoto(file);
+				photo.setChatId(chatId);
 				
 				try {
 					execute (edit);
+					execute (message);
+					execute (photo);
 				} catch (TelegramApiException e) {}
 			} else if (callData.equals("Phones")) {
 				EditMessageText edit = new EditMessageText();
 				edit.setChatId(chatId);
 				edit.setMessageId(messageId);
 				edit.setText("You have selected phones. Now choose the phone you want to buy");
+				message.setText("I am buy Iphone 13");
+				message.setChatId(chatId);
+				
+				InputFile file = new InputFile ("https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/3/2/3207787065_1.jpg/w_600");
+				photo.setPhoto(file);
+				photo.setChatId(chatId);
+				
 				try {
 					execute (edit);
+					execute (message);
+					execute (photo);
 				} catch (TelegramApiException e) {}
 			}
 		}
@@ -206,17 +224,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 		return message;
 	}
 	
-	private void balance (Long chat_id, String balance) {
-		SendMessage message = new SendMessage();
-		message.setChatId(chat_id);
-		
-		message.setText(balance);
-		
-		try {
-			execute (message);
-		} catch (TelegramApiException e) {}
-	}
-	
 	private void registerUser (Message msg) {
 		Chat chat = msg.getChat();
 		Long chatId = msg.getChatId();
@@ -242,6 +249,5 @@ public class TelegramBot extends TelegramLongPollingBot {
 		sessionFactory.openSession();
 		session.getTransaction().commit();
 		session.close();
-		
 	}
 }
