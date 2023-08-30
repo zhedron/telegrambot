@@ -30,8 +30,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 	
 	private final BotConfig bot;
 	
-	static final String HELP_COMMAND = "Welcome! Enter the following commands: /start getting to with bot\nEnter the command /store 5" + "to know the product" 
-	+ "\nFind out your /balance";
+	static final String HELP_COMMAND = "Welcome! Enter the following commands: /start getting to with bot\nEnter the command /store " + "to know the product";
 	
 	
 	public TelegramBot (BotConfig bot) {
